@@ -9,9 +9,6 @@ eventSource.onmessage = e => {
   initMessage(data)
 }
 
-let chatBox = document.querySelector('#chat-box')
-let msgInput = document.querySelector('#chat-outgoing-msg')
-
 const getSendMsgBox = (msg, time) => {
   return `<div class="sent_msg">
     <p>${msg}</p>
@@ -20,6 +17,8 @@ const getSendMsgBox = (msg, time) => {
 }
 
 const initMessage = data => {
+  let chatBox = document.querySelector('#chat-box')
+  let msgInput = document.querySelector('#chat-outgoing-msg')
   const { msg, createdAt } = data
   let chatOutgoingBox = document.createElement('div')
   chatOutgoingBox.className = 'outgoing_msg'
@@ -28,7 +27,9 @@ const initMessage = data => {
   msgInput.value = ''
 }
 
-const addMessage = () => {
+const addMessage = async () => {
+  let chatBox = document.querySelector('#chat-box')
+  let msgInput = document.querySelector('#chat-outgoing-msg')
   let chatOutgoingBox = document.createElement('div')
   chatOutgoingBox.className = 'outgoing_msg'
 
@@ -42,8 +43,23 @@ const addMessage = () => {
     '/' +
     date.getDate()
 
-  chatOutgoingBox.innerHTML = getSendMsgBox(msgInput.value, now)
-  chatBox.append(chatOutgoingBox)
+  let chat = {
+    sender: 'xanqus',
+    receiver: 'jhs512',
+    msg: msgInput.value,
+  }
+  let response = await fetch('http://localhost:8083/chat', {
+    method: 'post',
+    body: JSON.stringify(chat),
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+    },
+  })
+  console.log(response)
+
+  let parseResponse = await response.json()
+  console.log(parseResponse)
+
   msgInput.value = ''
 }
 
